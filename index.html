@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>School Bell Pro</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6C63FF">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#f0f4f8;min-height:100vh;padding-bottom:70px;touch-action:manipulation;color:#202030}
+.header{background:linear-gradient(145deg,#6C63FF,#3f3d9e);padding:14px;color:#fff;text-align:center;box-shadow:0 6px 20px rgba(108,99,255,.3);position:sticky;top:0;z-index:100}
+.header h2{font-weight:700;font-size:21px;display:flex;align-items:center;justify-content:center;gap:9px}
+.header-sub{font-size:11px;opacity:.85;margin-top:3px}
+.connection{margin-top:8px;font-size:11px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);padding:4px 10px;border-radius:30px}
+.dot{width:8px;height:8px;border-radius:50%;background:#ffcc00}.dot.online{background:#51e898}.dot.offline{background:#ff7676}
+.nav-tabs{display:flex;overflow-x:auto;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);padding:8px 10px;gap:4px;border-bottom:1px solid rgba(0,0,0,.04);position:sticky;top:68px;z-index:99;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}.nav-tab{padding:8px 13px;border-radius:30px;color:#4a4a6a;font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px}
+.nav-tab.active{background:#6C63FF;color:#fff;box-shadow:0 4px 14px rgba(108,99,255,.35)}
+.tab-content{display:none;padding:14px 12px 30px;animation:fadeUp .2s ease}.tab-content.active{display:block}
+@keyframes fadeUp{from{opacity:.4;transform:translateY(7px)}to{opacity:1;transform:none}}
+.card{background:rgba(255,255,255,.86);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.6);border-radius:20px;padding:15px 13px;margin-bottom:16px;box-shadow:0 8px 24px -6px rgba(0,0,0,.05)}
+.card h3{font-size:16px;font-weight:700;color:#1e1e2f;margin-bottom:13px;display:flex;align-items:center;gap:8px}.card h3 i{color:#6C63FF}
+.emergency-banner{background:linear-gradient(135deg,#ff6b6b,#ee5a24);border-radius:24px;padding:15px;color:#fff;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.emergency-banner .left{display:flex;align-items:center;gap:10px}.emergency-banner .left i{font-size:30px}.emergency-banner .left div{font-weight:600;font-size:15px}.emergency-banner .left span{font-weight:400;font-size:11px;opacity:.85;display:block}
+.emergency-controls{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);padding:4px 9px;border-radius:40px}.emergency-controls label{font-size:11px}.emergency-controls input{width:40px;padding:5px;border:0;border-radius:8px;font-weight:600;text-align:center}
+.btn-emergency{background:#fff;color:#ee5a24;border:0;padding:10px 18px;border-radius:40px;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:7px;flex:1;justify-content:center}
+.table-wrap{overflow-x:auto;border-radius:14px;margin:4px 0}table{width:100%;border-collapse:collapse;font-size:13px;min-width:360px}
+th{text-align:left;padding:9px 4px 6px;color:#5a5a7a;font-weight:600;font-size:11px;border-bottom:2px solid rgba(108,99,255,.12)}
+td{padding:6px 3px;border-bottom:1px solid rgba(0,0,0,.04);vertical-align:top}
+input,select{background:#fff;border:1px solid #e2e6ee;border-radius:10px;padding:8px 9px;font-size:13px;width:100%}input[type=time]{font-family:monospace;font-weight:600;color:#333;text-align:center}.w-small{width:58px;min-width:50px}.ampm-lbl{display:block;font-size:11px;color:#6C63FF;font-weight:800;text-align:center;margin-top:3px}
+.btn{background:#6C63FF;color:#fff;border:0;padding:10px 15px;border-radius:40px;font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:1}.btn-info{background:#4a8af4}.btn-danger{background:#ff5e5e}.btn-secondary{background:#72748a}.btn-sm{padding:5px 11px;font-size:11px;flex:0 0 auto}.btn-group{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+.status-box{padding:10px 12px;border-radius:12px;background:#f2f0ff;color:#4b46a5;font-size:12px;margin-bottom:12px}.status-box.ok{background:#eafaf1;color:#16814b}.status-box.warn{background:#fff5e6;color:#b45d00}.status-box.error{background:#fff0f0;color:#b3261e}
+.exception-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px}
+.exception-date{flex:1;cursor:pointer;color:#3f3d9e;font-weight:700}.exception-date small{display:block;color:#777;font-weight:400;margin-top:2px}.empty{text-align:center;color:#777;font-size:13px;padding:14px}
+.time-display{background:rgba(108,99,255,.07);padding:10px 15px;border-radius:40px;font-weight:600;font-size:14px;display:inline-block;border:1px solid rgba(108,99,255,.1);width:100%;text-align:center;color:#3f3d9e}
+.today-status-box{background:#fff3e0;border-left:4px solid #ffb142;padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:600;color:#d35400;font-size:13px}
+.sync-panel{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border-radius:14px;padding:10px;border:1px solid #e5e7ef;margin-bottom:12px}.sync-text{font-size:11px;color:#666}.sync-text b{display:block;color:#333;font-size:12px}
+.holiday-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:13px}
+.year-selector{display:flex;align-items:center;justify-content:center;gap:15px;font-size:17px;font-weight:700;margin-bottom:12px}.year-selector span{cursor:pointer;color:#6C63FF;background:rgba(108,99,255,.08);padding:4px 13px;border-radius:40px}
+.month-picker{display:flex;gap:8px;align-items:center;margin-bottom:12px}.month-picker select{font-weight:700;color:#3f3d9e}
+.month-card{background:rgba(255,255,255,.5);border-radius:18px;padding:12px 10px;border:1px solid rgba(255,255,255,.5)}
+.month-title{text-align:center;font-weight:700;margin-bottom:10px;color:#2d2d44;font-size:15px}.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.dow{font-size:10px;color:#777;text-align:center;padding-bottom:2px}
+.day-seat{background:#eef2f7;text-align:center;padding:7px 0;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;position:relative}.day-seat.selected{background:#6C63FF;color:#fff;box-shadow:0 4px 12px rgba(108,99,255,.3)}.day-seat.today{outline:2px solid #ffb142;outline-offset:-2px}.day-seat.selected::after{content:"✓";position:absolute;top:-6px;right:-5px;background:#fff;color:#6C63FF;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center;border:1px solid #6C63FF}
+.schedule-date-card{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid #e5e7ef;border-radius:13px;margin-bottom:8px;background:#fff}.schedule-date-card .date-main{flex:1;cursor:pointer}.schedule-date-card .date-main b{color:#3f3d9e}.schedule-date-card .date-main small{display:block;color:#777;margin-top:2px}
+.badge{font-size:10px;padding:4px 8px;border-radius:20px;background:#eee}.badge.pending{background:#fff0d8;color:#9a5b00}.badge.synced{background:#e9f9ef;color:#16814b}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e1e2f;color:#fff;padding:11px 20px;border-radius:60px;font-weight:600;font-size:13px;display:none;z-index:1000;box-shadow:0 10px 30px rgba(0,0,0,.2);max-width:90%;text-align:center}
+.modal-backdrop{position:fixed;inset:0;background:rgba(20,20,40,.45);z-index:500;display:none;align-items:flex-end;justify-content:center}.modal-backdrop.show{display:flex}
+.modal{background:#fff;width:100%;max-width:620px;max-height:88vh;overflow:auto;border-radius:22px 22px 0 0;padding:15px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.modal-head h3{margin:0}.close{border:0;background:#eee;border-radius:50%;width:34px;height:34px}
+
+/* New CSS for Holiday List */
+.holiday-list-container { margin-top: 15px; max-height: 200px; overflow-y: auto; border: 1px solid #e5e7ef; border-radius: 12px; background: white; padding: 5px; }
+.holiday-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid rgba(0,0,0,.04); font-size: 13px; }
+.holiday-item:last-child { border-bottom: none; }
+.holiday-item b { color: #3f3d9e; }
+
+@media(min-width:700px){.modal-backdrop{align-items:center}.modal{border-radius:22px}.tab-content{max-width:900px;margin:auto}}
+</style>
+</head>
+<body>
+<div class="header">
+  <h2><i class="fas fa-school"></i> School Bell Pro</h2>
+  <div class="header-sub"><i class="fas fa-bell"></i> Offline-first • PWA Ready</div>
+  <div class="connection"><span id="conn-dot" class="dot offline"></span><span id="conn-text">Pico Offline</span></div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('home')"><i class="fas fa-home"></i> Home</div>
+  <div class="nav-tab" onclick="switchTab('exceptions')"><i class="fas fa-calendar-day"></i> Exceptions</div>
+  <div class="nav-tab" onclick="switchTab('holidays')"><i class="fas fa-umbrella-beach"></i> Holidays</div>
+  <div class="nav-tab" onclick="switchTab('settings')"><i class="fas fa-clock"></i> Settings</div>
+</div>
+
+<div id="home" class="tab-content active">
+  <div class="sync-panel">
+    <div class="sync-text"><b id="local-status">Offline schedule ready</b><span id="last-sync">Local data: --</span></div>
+    <button class="btn btn-info btn-sm" onclick="syncAllToPico()"><i class="fas fa-cloud-upload-alt"></i> Sync Pico</button>
+  </div>
+  <div class="emergency-banner">
+    <div class="left"><i class="fas fa-bell"></i><div>Emergency <span>Custom duration</span></div></div>
+    <div class="emergency-controls"><label>Sec</label><input type="number" id="em-sec" value="3" min="1" max="60"><label>×</label><input type="number" id="em-count" value="1" min="1" max="10"></div>
+    <button class="btn-emergency" onclick="ringEmergency()"><i class="fas fa-bolt"></i> RING</button>
+  </div>
+
+  <div class="card">
+    <h3><i class="fas fa-calendar-alt"></i> Mon–Fri</h3>
+    <div class="table-wrap"><table><thead><tr><th>Period</th><th>Time (AM/PM)</th><th class="w-small">Sec</th><th class="w-small">×</th><th></th></tr></thead><tbody id="wd-body"></tbody></table></div>
+    <div class="btn-group"><button class="btn btn-info" onclick="addRow('wd-body','P')"><i class="fas fa-plus"></i> Add</button><button class="btn" onclick="saveData('save_weekdays','wd-body')"><i class="fas fa-save"></i> Save</button></div>
+  </div>
+
+  <div class="card">
+    <h3><i class="fas fa-calendar-week"></i> Saturday</h3>
+    <div class="table-wrap"><table><thead><tr><th>Period</th><th>Time (AM/PM)</th><th class="w-small">Sec</th><th class="w-small">×</th><th></th></tr></thead><tbody id="sat-body"></tbody></table></div>
+    <div class="btn-group"><button class="btn btn-info" onclick="addRow('sat-body','S')"><i class="fas fa-plus"></i> Add</button><button class="btn" onclick="saveData('save_saturday','sat-body')"><i class="fas fa-save"></i> Save</button></div>
+  </div>
+</div>
+
+<div id="exceptions" class="tab-content">
+  <div class="card">
+    <h3><i class="fas fa-plus-circle"></i> Add / Edit Exception</h3>
+    <input type="date" id="ex-date" style="margin-bottom:12px">
+    <div class="table-wrap"><table><thead><tr><th>Period</th><th>Time (AM/PM)</th><th class="w-small">Sec</th><th class="w-small">×</th><th></th></tr></thead><tbody id="ex-body"></tbody></table></div>
+    <div class="btn-group"><button class="btn btn-info" onclick="addRow('ex-body','E')"><i class="fas fa-plus"></i> Add</button><button class="btn" onclick="saveException()"><i class="fas fa-save"></i> Save</button></div>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-list-ul"></i> Saved Exception Schedule</h3>
+    <div id="ex-list"></div>
+  </div>
+</div>
+
+<div id="holidays" class="tab-content">
+  <div class="card">
+    <div class="holiday-header">
+      <div style="font-size:13px"><i class="fas fa-calendar-check"></i> Selected: <strong id="h-count">0</strong> days</div>
+      <div style="display:flex;gap:6px"><button class="btn btn-danger btn-sm" onclick="clearAllHolidays()"><i class="fas fa-trash-alt"></i> Clear</button><button class="btn btn-sm" onclick="saveHolidays()"><i class="fas fa-save"></i> Save</button></div>
+    </div>
+    <div class="year-selector"><span onclick="changeYear(-1)"><i class="fas fa-chevron-left"></i></span><span id="disp-year"></span><span onclick="changeYear(1)"><i class="fas fa-chevron-right"></i></span></div>
+    <div class="month-picker"><select id="holiday-month" onchange="renderCalendar()"></select></div>
+    <div id="calendar"></div>
+  </div>
+  
+  <div class="card">
+    <h3><i class="fas fa-list-ul"></i> Selected Holidays List</h3>
+    <div id="hol-list" class="holiday-list-container">
+       <div class="empty">No holidays selected.</div>
+    </div>
+  </div>
+</div>
+
+<div id="settings" class="tab-content">
+  <div class="card">
+    <h3><i class="fas fa-clock"></i> Device Time</h3>
+    <p id="dev-time" class="time-display">Fetching...</p>
+    <button class="btn btn-info" onclick="autoSyncTime()" style="margin-top:12px;width:100%"><i class="fas fa-sync-alt"></i> Sync from Phone</button>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-calendar-day"></i> Today's Schedule</h3>
+    <div id="today-status" class="today-status-box">Loading local schedule...</div>
+    <div class="table-wrap"><table><thead><tr><th>Period</th><th>Time (AM/PM)</th><th class="w-small">Sec</th><th class="w-small">×</th></tr></thead><tbody id="today-body"></tbody></table></div>
+  </div>
+  <div class="card">
+    <h3><i class="fas fa-database"></i> Offline Storage</h3>
+    <p style="font-size:12px;color:#666;line-height:1.5">Schedule, exceptions and holidays are stored in the PWA's local IndexedDB. They remain available when the Pico is disconnected.</p>
+    <div class="btn-group"><button class="btn btn-secondary" onclick="exportLocalData()"><i class="fas fa-download"></i> Backup JSON</button><button class="btn btn-danger" onclick="clearLocalData()"><i class="fas fa-trash"></i> Clear Local</button></div>
+  </div>
+</div>
+
+<div id="exception-modal" class="modal-backdrop" onclick="if(event.target===this)closeExceptionViewer()">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modal-title">Exception Schedule</h3><button class="close" onclick="closeExceptionViewer()">×</button></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const API="http://192.168.4.1/api/";
+const DB_NAME="SchoolBellOfflineDB", DB_VERSION=1, STORE="app";
+let allData={}, holidaysSet=new Set(), currentYear=new Date().getFullYear(), selectedMonth=new Date().getMonth();
+let picoOnline=false, syncing=false;
+
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(console.error);
+
+function showToast(msg){const t=document.getElementById("toast");t.innerHTML=msg;t.style.display="block";clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.style.display="none",2800)}
+function switchTab(id){document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".nav-tab").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav-tab").forEach(x=>{if(x.innerText.toLowerCase().includes(id==="home"?"home":id))x.classList.add("active")});if(id==="holidays")renderCalendar();if(id==="exceptions")renderExceptionsList(allData.exceptions)}
+function pad(n){return String(n).padStart(2,"0")}
+function dateKey(y,m,d){return `${y}-${pad(m+1)}-${pad(d)}`}
+function formatAMPM(t){if(!t)return"--:--";let [h,m]=t.split(":");h=parseInt(h);let ap=h>=12?"PM":"AM";h=h%12||12;return `${h}:${m} ${ap}`}
+window.updateRowAMPM=el=>{const l=el.nextElementSibling;if(l)l.innerText=formatAMPM(el.value)}
+
+function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE)};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function localGet(){const db=await openDB();return new Promise((res,rej)=>{const r=db.transaction(STORE,"readonly").objectStore(STORE).get("data");r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error)})}
+async function localSet(data){const db=await openDB();return new Promise((res,rej)=>{const r=db.transaction(STORE,"readwrite").objectStore(STORE).put(data,"data");r.onsuccess=res;r.onerror=()=>rej(r.error)})}
+async function getLocal(){return await localGet().catch(()=>null)}
+async function saveLocal(){allData._localSavedAt=new Date().toISOString();await localSet(allData);updateSyncInfo()}
+
+function normalizeData(d){
+ d=d&&typeof d==="object"?d:{};
+ d.weekdays=Array.isArray(d.weekdays)?d.weekdays:[];
+ d.saturday=Array.isArray(d.saturday)?d.saturday:[];
+ d.exceptions=d.exceptions&&typeof d.exceptions==="object"&&!Array.isArray(d.exceptions)?d.exceptions:{};
+ d.holidays=Array.isArray(d.holidays)?d.holidays:Object.keys(d.holidays||{});
+ return d;
+}
+function setConnection(ok,msg){picoOnline=!!ok;document.getElementById("conn-dot").className="dot "+(ok?"online":"offline");document.getElementById("conn-text").innerText=msg|| (ok?"Pico Connected":"Pico Offline")}
+function updateSyncInfo(){const d=allData._localSavedAt?new Date(allData._localSavedAt).toLocaleString("en-GB"):"--";document.getElementById("last-sync").innerText=`Local data: ${d}`;document.getElementById("local-status").innerText=syncing?"Syncing to Pico...":"Offline schedule ready"}
+
+async function fetchApi(endpoint,method="GET",body=null){
+ const opt={method,headers:{"Content-Type":"application/json"},cache:"no-store"};if(body!==null)opt.body=JSON.stringify(body);
+ try{const r=await fetch(API+endpoint,opt);if(!r.ok)throw Error("HTTP "+r.status);const j=await r.json();setConnection(true,"Pico Connected");return j}
+ catch(e){setConnection(false,"Pico Offline");return null}
+}
+
+async function loadData(){
+ const local=normalizeData(await getLocal()); if(local){allData=local;holidaysSet=new Set(allData.holidays||[]);renderAll()}
+ const remote=await fetchApi("data");
+ if(remote){
+   allData=normalizeData(remote);
+   holidaysSet=new Set(allData.holidays||[]);
+   await saveLocal();
+   renderAll();
+ }else if(!local){
+   allData=normalizeData({});
+   holidaysSet=new Set();
+   renderAll();
+ }
+}
+
+function renderAll(){
+ renderTable("wd-body",allData.weekdays);renderTable("sat-body",allData.saturday);
+ renderTable("ex-body",[]);
+ renderExceptionsList(allData.exceptions);
+ renderCalendar();
+ renderTodaySchedule();
+ if(allData.device_time){const dt=new Date(allData.device_time);if(!isNaN(dt)){document.getElementById("dev-time").innerHTML=`🕒 ${dt.toLocaleDateString("en-GB")} &nbsp;•&nbsp; ${formatAMPM(`${pad(dt.getHours())}:${pad(dt.getMinutes())}`)}`}}
+ updateSyncInfo();
+}
+
+function renderTable(id,periods){let h="";(periods||[]).forEach(p=>h+=rowHTML(p));document.getElementById(id).innerHTML=h}
+function rowHTML(p){return `<tr><td><input type="text" class="p-name" value="${esc(p.period||"")}"></td><td style="white-space:nowrap;min-width:85px"><input type="time" class="p-time" value="${esc(p.time||"")}" onchange="updateRowAMPM(this)"><div class="ampm-lbl">${formatAMPM(p.time)}</div></td><td><input type="number" class="w-small p-sec" value="${p.duration||2}"></td><td><input type="number" class="w-small p-cnt" value="${p.count||1}"></td><td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td></tr>`}
+function addRow(id,prefix){let n=document.getElementById(id).children.length+1;document.getElementById(id).insertAdjacentHTML("beforeend",rowHTML({period:prefix+n,time:"",duration:2,count:1}))}
+function getTableData(id){const a=[];document.querySelectorAll(`#${id} tr`).forEach(tr=>{const time=tr.querySelector(".p-time")?.value;if(time)a.push({period:tr.querySelector(".p-name").value,time,duration:parseInt(tr.querySelector(".p-sec").value)||2,count:parseInt(tr.querySelector(".p-cnt").value)||1})});return a}
+function esc(s){return String(s).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
+
+async function saveData(endpoint,id){
+ const data=getTableData(id);
+ if(endpoint==="save_weekdays")allData.weekdays=data;else allData.saturday=data;
+ await saveLocal();renderTodaySchedule();
+ const r=await fetchApi(endpoint,"POST",data);
+ if(r?.status==="success"){await loadData();showToast("✅ Pico + Offline Saved")}else{showToast("💾 Offline Saved — Pico પછી Sync કરો")}
+}
+
+function editException(date){document.getElementById("ex-date").value=date;renderTable("ex-body",allData.exceptions?.[date]||[]);switchTab("exceptions");window.scrollTo({top:0,behavior:"smooth"})}
+async function saveException(){
+ const date=document.getElementById("ex-date").value;if(!date)return alert("Select a date.");
+ const periods=getTableData("ex-body");allData.exceptions[date]=periods;await saveLocal();renderExceptionsList(allData.exceptions);renderTodaySchedule();
+ const r=await fetchApi("save_exception","POST",{date,periods});
+ if(r?.status==="success"){await loadData();showToast("✅ Exception Saved")}else showToast("💾 Exception Offline Saved")
+}
+async function removeException(date){
+ if(!confirm(`Remove ${date} exception?`))return;
+ delete allData.exceptions[date];await saveLocal();renderExceptionsList(allData.exceptions);renderTodaySchedule();
+ const r=await fetchApi("remove_exception","POST",{date});showToast(r?.status==="success"?"🗑️ Removed from Pico":"🗑️ Removed Offline — Sync કરો")
+}
+function renderExceptionsList(exs){
+ const dates=Object.keys(exs||{}).sort();let h="";
+ dates.forEach(date=>{const n=(exs[date]||[]).length;h+=`<div class="schedule-date-card"><div class="date-main" onclick="viewException('${date}')"><b><i class="fas fa-calendar-day"></i> ${date}</b><small>${n} periods • Tap to view full schedule</small></div><button class="btn btn-info btn-sm" onclick="editException('${date}')"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="removeException('${date}')"><i class="fas fa-trash"></i></button></div>`});
+ document.getElementById("ex-list").innerHTML=h||`<div class="empty">No exceptions added.</div>`;
+}
+function viewException(date){
+ const ps=allData.exceptions?.[date]||[];document.getElementById("modal-title").innerText=`Exception • ${date}`;
+ let h=ps.length?`<div class="table-wrap"><table><thead><tr><th>Period</th><th>Time</th><th>Sec</th><th>×</th></tr></thead><tbody>${ps.map(p=>`<tr><td><b>${esc(p.period)}</b></td><td>${formatAMPM(p.time)}</td><td>${p.duration}s</td><td>${p.count}</td></tr>`).join("")}</tbody></table></div>`:`<div class="empty">No periods for this date.</div>`;
+ document.getElementById("modal-body").innerHTML=h;document.getElementById("exception-modal").classList.add("show")
+}
+function closeExceptionViewer(){document.getElementById("exception-modal").classList.remove("show")}
+
+function setupMonthPicker(){const names=["January","February","March","April","May","June","July","August","September","October","November","December"];const s=document.getElementById("holiday-month");s.innerHTML=names.map((x,i)=>`<option value="${i}">${x}</option>`).join("");s.value=selectedMonth}
+function changeYear(d){currentYear+=d;renderCalendar()}
+function renderCalendar(){
+ document.getElementById("disp-year").innerText=currentYear;
+ 
+ // સુધારો: ડ્રોપડાઉનમાંથી જે મહિનો સિલેક્ટ થયો હોય તે વાંચો
+ selectedMonth = parseInt(document.getElementById("holiday-month").value);
+ 
+ const m=selectedMonth,days=new Date(currentYear,m+1,0).getDate(),first=new Date(currentYear,m,1).getDay();
+ let h=`<div class="month-card"><div class="month-title">${document.getElementById("holiday-month").selectedOptions[0]?.text||""} ${currentYear}</div><div class="days-grid">`;
+ ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(x=>h+=`<div class="dow">${x}</div>`);
+ for(let i=0;i<first;i++)h+=`<div></div>`;
+ const today=new Date();for(let d=1;d<=days;d++){const ds=dateKey(currentYear,m,d);const sel=holidaysSet.has(ds)?"selected":"";const tod=(ds===dateKey(today.getFullYear(),today.getMonth(),today.getDate()))?"today":"";h+=`<div class="day-seat ${sel} ${tod}" onclick="toggleHol('${ds}',this)">${d}</div>`}
+ h+="</div></div>";document.getElementById("calendar").innerHTML=h;document.getElementById("h-count").innerText=holidaysSet.size;
+ renderHolidayList();
+}
+
+
+// New Function to render Holiday List
+function renderHolidayList() {
+    const listContainer = document.getElementById("hol-list");
+    if (holidaysSet.size === 0) {
+        listContainer.innerHTML = '<div class="empty">No holidays selected.</div>';
+        return;
+    }
+    let html = "";
+    const sortedHols = Array.from(holidaysSet).sort();
+    sortedHols.forEach(date => {
+        html += `<div class="holiday-item">
+            <b><i class="fas fa-calendar-day"></i> ${date}</b>
+            <button class="btn btn-danger btn-sm" onclick="removeHolidayFromList('${date}')"><i class="fas fa-trash"></i></button>
+        </div>`;
+    });
+    listContainer.innerHTML = html;
+}
+
+// Function to remove Holiday specifically from the List
+function removeHolidayFromList(dateStr) {
+    if(holidaysSet.has(dateStr)) {
+        holidaysSet.delete(dateStr);
+        allData.holidays = Array.from(holidaysSet);
+        saveLocal();
+        renderCalendar(); // This will also re-render the list
+    }
+}
+
+function toggleHol(ds,el){
+    if(holidaysSet.has(ds)){
+        holidaysSet.delete(ds);
+        el.classList.remove("selected");
+    }else{
+        holidaysSet.add(ds);
+        el.classList.add("selected");
+    }
+    allData.holidays=Array.from(holidaysSet);
+    saveLocal();
+    document.getElementById("h-count").innerText=holidaysSet.size;
+    renderHolidayList();
+}
+
+function clearAllHolidays(){
+    if(!holidaysSet.size)return; 
+    if(confirm("Remove all selected holidays?")){
+        holidaysSet.clear();
+        allData.holidays=[];
+        saveLocal();
+        renderCalendar();
+        showToast("Cleared locally")
+    }
+}
+async function saveHolidays(){
+ allData.holidays=Array.from(holidaysSet);await saveLocal();const r=await fetchApi("save_holidays","POST",allData.holidays);showToast(r?.status==="success"?"✅ Holidays Saved to Pico":"💾 Holidays Saved Offline — Sync કરો")
+}
+
+function renderTodaySchedule(){
+ const now=allData.device_time?new Date(allData.device_time):new Date();const ds=dateKey(now.getFullYear(),now.getMonth(),now.getDate()),dow=now.getDay();
+ let status="",ps=[];
+ if(holidaysSet.has(ds))status="🏖️ Holiday (No Bell)";
+ else if(allData.exceptions?.[ds]){status="📅 Exception Day";ps=allData.exceptions[ds]}
+ else if(dow===0)status="😴 Sunday (No Bell)";
+ else if(dow===6){status="🗓️ Saturday";ps=allData.saturday||[]}
+ else{status="📖 Mon-Fri";ps=allData.weekdays||[]}
+ document.getElementById("today-status").innerText=`${status} • Date: ${now.toLocaleDateString("en-GB")}`;
+ document.getElementById("today-body").innerHTML=ps.length?ps.map(p=>`<tr><td><b>${esc(p.period)}</b></td><td style="color:#6C63FF;font-weight:800">${formatAMPM(p.time)}</td><td>${p.duration}s</td><td>${p.count}</td></tr>`).join(""):`<tr><td colspan="4" class="empty">No bells scheduled for today.</td></tr>`
+}
+
+async function syncAllToPico(){
+ if(syncing)return;syncing=true;updateSyncInfo();
+ try{
+  let ok=0,total=4;
+  let r=await fetchApi("save_weekdays","POST",allData.weekdays||[]);if(r?.status==="success")ok++;
+  r=await fetchApi("save_saturday","POST",allData.saturday||[]);if(r?.status==="success")ok++;
+  const remote=await fetchApi("data");
+  const remoteEx=remote?.exceptions||{};
+  for(const date of Object.keys(remoteEx))if(!allData.exceptions?.[date])await fetchApi("remove_exception","POST",{date});
+  for(const date of Object.keys(allData.exceptions||{})){r=await fetchApi("save_exception","POST",{date,periods:allData.exceptions[date]});if(r?.status==="success")ok++}
+  r=await fetchApi("save_holidays","POST",Array.from(holidaysSet));if(r?.status==="success")ok++;
+  await loadData();
+  showToast(ok>=total?"☁️ Full schedule synced to Pico":"⚠️ Sync incomplete")
+ }finally{syncing=false;updateSyncInfo()}
+}
+
+async function ringEmergency(){if(!confirm("Ring Emergency Bell?"))return;const data={duration:parseInt(document.getElementById("em-sec").value)||3,count:parseInt(document.getElementById("em-count").value)||1};const r=await fetchApi("emergency","POST",data);showToast(r?.status==="success"?"🔔 Ringing":"📴 Pico Offline")}
+async function autoSyncTime(){const d=new Date(),iso=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;const r=await fetchApi("set_time","POST",{datetime:iso});if(r?.status==="success"){await loadData();showToast("🕒 Time Synced")}}
+
+function exportLocalData(){const blob=new Blob([JSON.stringify(normalizeData(allData),null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="school-bell-offline-backup.json";a.click();URL.revokeObjectURL(a.href)}
+async function clearLocalData(){if(!confirm("Local offline schedule delete કરવી? Pico data delete નહીં થાય."))return;const db=await openDB();db.transaction(STORE,"readwrite").objectStore(STORE).delete("data");allData=normalizeData({});holidaysSet=new Set();renderAll();showToast("Local data cleared")}
+window.addEventListener("online",()=>{if(!picoOnline)loadData()});
+window.addEventListener("offline",()=>setConnection(false,"Pico Offline"));
+
+setupMonthPicker();
+loadData();
+</script>
+</body>
+</html>
