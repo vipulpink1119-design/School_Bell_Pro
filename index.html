@@ -186,13 +186,13 @@ function normalizeData(d){
  d.holidays=Array.isArray(d.holidays)?d.holidays:Object.keys(d.holidays||{});
  return d;
 }
-function setConnection(ok,msg){picoOnline=!!ok;document.getElementById("conn-dot").className="dot "+(ok?"online":"offline");document.getElementById("conn-text").innerText=msg|| (ok?"Pico Connected":"Pico Offline")}
+function setConnection(ok,msg){picoOnline=!!ok;document.getElementById("conn-dot").className="dot "+(ok?"online":"offline");document.getElementById("conn-text").innerText=msg|| (ok?"Pico Connected":"School Bell Offline")}
 function updateSyncInfo(){const d=allData._localSavedAt?new Date(allData._localSavedAt).toLocaleString("en-GB"):"--";document.getElementById("last-sync").innerText=`Local data: ${d}`;document.getElementById("local-status").innerText=syncing?"Syncing to Pico...":"Offline schedule ready"}
 
 async function fetchApi(endpoint,method="GET",body=null){
  const opt={method,headers:{"Content-Type":"application/json"},cache:"no-store"};if(body!==null)opt.body=JSON.stringify(body);
  try{const r=await fetch(API+endpoint,opt);if(!r.ok)throw Error("HTTP "+r.status);const j=await r.json();setConnection(true,"Pico Connected");return j}
- catch(e){setConnection(false,"Pico Offline");return null}
+ catch(e){setConnection(false,"School Bell Offline");return null}
 }
 
 async function loadData(){
@@ -360,13 +360,13 @@ async function syncAllToPico(){
  }finally{syncing=false;updateSyncInfo()}
 }
 
-async function ringEmergency(){if(!confirm("Ring Emergency Bell?"))return;const data={duration:parseInt(document.getElementById("em-sec").value)||3,count:parseInt(document.getElementById("em-count").value)||1};const r=await fetchApi("emergency","POST",data);showToast(r?.status==="success"?"🔔 Ringing":"📴 Pico Offline")}
+async function ringEmergency(){if(!confirm("Ring Emergency Bell?"))return;const data={duration:parseInt(document.getElementById("em-sec").value)||3,count:parseInt(document.getElementById("em-count").value)||1};const r=await fetchApi("emergency","POST",data);showToast(r?.status==="success"?"🔔 Ringing":"📴 School Bell Offline")}
 async function autoSyncTime(){const d=new Date(),iso=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;const r=await fetchApi("set_time","POST",{datetime:iso});if(r?.status==="success"){await loadData();showToast("🕒 Time Synced")}}
 
 function exportLocalData(){const blob=new Blob([JSON.stringify(normalizeData(allData),null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="school-bell-offline-backup.json";a.click();URL.revokeObjectURL(a.href)}
 async function clearLocalData(){if(!confirm("Local offline schedule delete કરવી? Pico data delete નહીં થાય."))return;const db=await openDB();db.transaction(STORE,"readwrite").objectStore(STORE).delete("data");allData=normalizeData({});holidaysSet=new Set();renderAll();showToast("Local data cleared")}
 window.addEventListener("online",()=>{if(!picoOnline)loadData()});
-window.addEventListener("offline",()=>setConnection(false,"Pico Offline"));
+window.addEventListener("offline",()=>setConnection(false,"School Bell Offline"));
 
 setupMonthPicker();
 loadData();
