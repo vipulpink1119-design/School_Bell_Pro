@@ -221,7 +221,7 @@ function updateSyncInfo(){const d=allData._localSavedAt?new Date(allData._localS
 
 async function fetchApi(endpoint,method="GET",body=null){
  const opt={method,headers:{"Content-Type":"application/json"},cache:"no-store"};if(body!==null)opt.body=JSON.stringify(body);
- try{const r=await fetch(API+endpoint,opt);if(!r.ok)throw Error("HTTP "+r.status);const j=await r.json();setConnection(true,"Pico Connected");return j}
+ try{const r=await fetch(API+endpoint,opt);if(!r.ok)throw Error("HTTP "+r.status);const j=await r.json();setConnection(true,"School Bell Online");return j}
  catch(e){setConnection(false,"School Bell Offline");return null}
 }
 
